@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador AJ - Acto Jurídico</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+        .pregunta { font-size: 18px; margin-bottom: 10px; }
+        .opcion { margin: 5px 0; }
+        .respuesta { margin-top: 15px; font-weight: bold; color: green; }
+        button { margin-top: 20px; padding: 10px 20px; }
+        .tipo { font-style: italic; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>Simulador Academia Judicial – Acto Jurídico</h1>
+    <div id="tipo" class="tipo"></div>
+    <div id="pregunta" class="pregunta"></div>
+    <div id="opciones"></div>
+    <div id="respuesta" class="respuesta"></div>
+    <button onclick="mostrarRespuesta()">Mostrar respuesta</button>
+    <button onclick="siguientePregunta()">Siguiente pregunta</button>
+
+    <script src="preguntas.js"></script>
+    <script>
+        let indiceActual = 0;
+        let tipoActual = "";
+
+        function cargarPregunta() {
+            const todas = preguntas_multiples.concat(preguntas_vf);
+            const pregunta = todas[Math.floor(Math.random() * todas.length)];
+            tipoActual = pregunta.tipo;
+            document.getElementById("tipo").innerText = "Tipo: " + tipoActual;
+            document.getElementById("pregunta").innerText = pregunta.pregunta;
+            document.getElementById("respuesta").innerText = "";
+            const contenedor = document.getElementById("opciones");
+            contenedor.innerHTML = "";
+            if (tipoActual === "Seleccion multiple") {
+                pregunta.opciones.forEach((opc, i) => {
+                    const p = document.createElement("div");
+                    p.className = "opcion";
+                    p.innerText = String.fromCharCode(65+i) + ". " + opc;
+                    contenedor.appendChild(p);
+                });
+            } else {
+                const p = document.createElement("div");
+                p.className = "opcion";
+                p.innerText = "¿Verdadero o Falso?";
+                contenedor.appendChild(p);
+            }
+            document.getElementById("respuesta").setAttribute("data-correcta", pregunta.respuesta);
+        }
+
+        function mostrarRespuesta() {
+            const correcta = document.getElementById("respuesta").getAttribute("data-correcta");
+            document.getElementById("respuesta").innerText = "Respuesta correcta: " + correcta;
+        }
+
+        function siguientePregunta() {
+            cargarPregunta();
+        }
+
+        window.onload = cargarPregunta;
+    </script>
+</body>
+</html>
