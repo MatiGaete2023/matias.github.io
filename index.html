@@ -1,67 +1,124 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Simulador AJ - Acto Jurídico</title>
-    <style>
-        body { font-family: Arial; padding: 20px; background: #f9f9f9; }
-        .pregunta { font-size: 18px; margin-bottom: 10px; }
-        .opcion { margin: 5px 0; }
-        .respuesta { margin-top: 15px; font-weight: bold; color: green; }
-        button { margin-top: 20px; padding: 10px 20px; }
-        .tipo { font-style: italic; color: #555; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Simulador Academia Judicial</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .pregunta {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .opcion {
+      padding: 8px;
+      border: 1px solid #ccc;
+      margin: 4px 0;
+      cursor: pointer;
+      background-color: #fff;
+      width: fit-content;
+    }
+    .opcion:hover {
+      background-color: #e0e0e0;
+    }
+    .respuesta {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .puntaje {
+      margin-top: 15px;
+      font-weight: bold;
+      color: darkblue;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Simulador Academia Judicial – Acto Jurídico</h1>
-    <div id="tipo" class="tipo"></div>
-    <div id="pregunta" class="pregunta"></div>
-    <div id="opciones"></div>
-    <div id="respuesta" class="respuesta"></div>
-    <button onclick="mostrarRespuesta()">Mostrar respuesta</button>
-    <button onclick="siguientePregunta()">Siguiente pregunta</button>
+  <h1>Simulador Academia Judicial</h1>
+  <div class="puntaje" id="puntaje"></div>
+  <div class="pregunta" id="pregunta"></div>
+  <div id="opciones"></div>
+  <div class="respuesta" id="respuesta"></div>
+  <button onclick="siguientePregunta()">Siguiente pregunta</button>
+  <button onclick="reiniciarSimulador()">Reiniciar</button>
 
-    <script src="preguntas.js"></script>
-    <script>
-        let indiceActual = 0;
-        let tipoActual = "";
+  <script src="preguntas.js"></script>
+  <script>
+    let todas = [];
+    let puntaje = 0;
+    let total = 0;
+    let preguntaActual = null;
 
-        function cargarPregunta() {
-            const todas = preguntas_multiples.concat(preguntas_vf);
-            const pregunta = todas[Math.floor(Math.random() * todas.length)];
-            tipoActual = pregunta.tipo;
-            document.getElementById("tipo").innerText = "Tipo: " + tipoActual;
-            document.getElementById("pregunta").innerText = pregunta.pregunta;
-            document.getElementById("respuesta").innerText = "";
-            const contenedor = document.getElementById("opciones");
-            contenedor.innerHTML = "";
-            if (tipoActual === "Seleccion multiple") {
-                pregunta.opciones.forEach((opc, i) => {
-                    const p = document.createElement("div");
-                    p.className = "opcion";
-                    p.innerText = String.fromCharCode(65+i) + ". " + opc;
-                    contenedor.appendChild(p);
-                });
-            } else {
-                const p = document.createElement("div");
-                p.className = "opcion";
-                p.innerText = "¿Verdadero o Falso?";
-                contenedor.appendChild(p);
-            }
-            document.getElementById("respuesta").setAttribute("data-correcta", pregunta.respuesta);
-        }
+    function unirPreguntas() {
+      todas = [];
+      if (typeof preguntas_multiples !== 'undefined') {
+        todas = todas.concat(preguntas_multiples);
+      }
+      if (typeof preguntas_vf !== 'undefined') {
+        preguntas_vf.forEach(p => {
+          p.opciones = ["Verdadero", "Falso"];
+        });
+        todas = todas.concat(preguntas_vf);
+      }
+    }
 
-        function mostrarRespuesta() {
-            const correcta = document.getElementById("respuesta").getAttribute("data-correcta");
-            document.getElementById("respuesta").innerText = "Respuesta correcta: " + correcta;
-        }
+    function cargarPregunta() {
+      unirPreguntas();
+      document.getElementById("respuesta").innerText = "";
+      const i = Math.floor(Math.random() * todas.length);
+      preguntaActual = todas[i];
+      document.getElementById("pregunta").innerText = preguntaActual.pregunta;
+      const contenedor = document.getElementById("opciones");
+      contenedor.innerHTML = "";
+      preguntaActual.opciones.forEach((opc) => {
+        const div = document.createElement("div");
+        div.className = "opcion";
+        div.innerText = opc;
+        div.onclick = () => validarRespuesta(opc);
+        contenedor.appendChild(div);
+      });
+      actualizarPuntaje();
+    }
 
-        function siguientePregunta() {
-            cargarPregunta();
-        }
+    function validarRespuesta(seleccion) {
+      const correcta = preguntaActual.respuesta;
+      const resp = document.getElementById("respuesta");
+      if (seleccion === correcta || seleccion === correcta.toUpperCase()) {
+        puntaje++;
+        resp.innerText = "¡Correcto!";
+        resp.style.color = "green";
+      } else {
+        resp.innerText = "Incorrecto. Respuesta correcta: " + correcta;
+        resp.style.color = "red";
+      }
+      total++;
+      actualizarPuntaje();
+    }
 
-        window.onload = cargarPregunta;
-    </script>
+    function actualizarPuntaje() {
+      document.getElementById("puntaje").innerText = `Puntaje: ${puntaje} / ${total}`;
+    }
+
+    function siguientePregunta() {
+      cargarPregunta();
+    }
+
+    function reiniciarSimulador() {
+      puntaje = 0;
+      total = 0;
+      cargarPregunta();
+    }
+
+    window.onload = cargarPregunta;
+  </script>
 </body>
 </html>
