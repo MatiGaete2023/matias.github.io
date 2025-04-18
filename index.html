@@ -1,136 +1,149 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Simulador AJ – Acto Jurídico</title>
+  <title>Simulador AJ PF-91</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 20px;
+      background-color: #f7f7f7;
     }
-    .pregunta {
-      font-size: 18px;
-      margin-bottom: 10px;
+    h1, h2, h3 {
+      color: #003366;
+    }
+    .menu, .pregunta, .resultado {
+      margin-bottom: 20px;
     }
     .opcion {
       display: block;
-      margin: 5px 0;
+      margin: 10px 0;
       padding: 10px;
-      border: 1px solid #ccc;
+      background-color: #e0e0e0;
+      border: none;
+      font-size: 16px;
       cursor: pointer;
     }
     .opcion:hover {
-      background-color: #eef;
+      background-color: #d0d0d0;
     }
-    #respuesta {
-      margin-top: 15px;
+    .correcto {
+      color: green;
       font-weight: bold;
     }
-    #puntaje {
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: navy;
+    .incorrecto {
+      color: red;
+      font-weight: bold;
+    }
+    .oculto {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h2>Simulador Academia Judicial</h2>
-  <div id="puntaje"></div>
-  <div id="tipo" class="tipo"></div>
-  <div id="pregunta" class="pregunta"></div>
-  <div id="opciones"></div>
-  <div id="respuesta"></div>
-  <button onclick="siguientePregunta()">Siguiente pregunta</button>
-  <button onclick="reiniciarSimulador()">Reiniciar</button>  <script>
+  <h1>Simulador Academia Judicial – PF-91</h1>
+  <div class="menu" id="menu">
+    <h2>Selecciona un modo:</h2>
+    <button onclick="iniciarSimulador('examen')">Modo Examen AJ</button>
+    <button onclick="iniciarSimulador('estudio')">Modo Estudio</button>
+  </div>
+
+  <div class="pregunta oculto" id="pregunta"></div>
+  <div class="resultado" id="resultado"></div>
+  <div id="control" class="oculto">
+    <button onclick="siguientePregunta()">Siguiente pregunta</button>
+    <button onclick="reiniciarSimulador()">Reiniciar</button>
+  </div>
+
+  <h3 id="puntaje"></h3>
+
+  <script>
     const preguntas = [
-      {
-        tipo: "Seleccion multiple",
-        pregunta: "¿Cuál de los siguientes es un elemento esencial del acto jurídico?",
-        opciones: ["Condición", "Objeto lícito", "Plazo", "Modalidad"],
-        respuesta: "Objeto lícito"
-      },
-      {
-        tipo: "Seleccion multiple",
-        pregunta: "El silencio como manifestación de voluntad en el acto jurídico...",
-        opciones: [
-          "Siempre se considera aceptación",
-          "Nunca produce efectos",
-          "Puede ser relevante si hay norma o costumbre",
-          "Anula el consentimiento"
-        ],
-        respuesta: "Puede ser relevante si hay norma o costumbre"
-      },
-      {
-        tipo: "Verdadero / Falso",
-        pregunta: "El error esencial en el objeto puede anular un acto jurídico.",
-        opciones: ["Verdadero", "Falso"],
-        respuesta: "Verdadero"
-      },
-      {
-        tipo: "Verdadero / Falso",
-        pregunta: "El acto jurídico unilateral requiere dos partes.",
-        opciones: ["Verdadero", "Falso"],
-        respuesta: "Falso"
-      }
+      { tipo: 'Seleccion múltiple', pregunta: '¿Cuál de los siguientes es un elemento esencial del acto jurídico?', opciones: ['Condición', 'Objeto lícito', 'Plazo', 'Modalidad'], respuesta: 'B', tema: 'Acto Jurídico' },
+      { tipo: 'Verdadero / Falso', pregunta: 'El error esencial en el objeto puede anular un acto jurídico.', opciones: ['Verdadero', 'Falso'], respuesta: 'Verdadero', tema: 'Acto Jurídico' },
+      { tipo: 'Verdadero / Falso', pregunta: 'El silencio como manifestación de voluntad en el acto jurídico siempre se considera aceptación.', opciones: ['Verdadero', 'Falso'], respuesta: 'Falso', tema: 'Acto Jurídico' },
+      { tipo: 'Seleccion múltiple', pregunta: 'El silencio como manifestación de voluntad en el acto jurídico...', opciones: ['Siempre se considera aceptación', 'Nunca produce efectos', 'Puede ser relevante si hay norma o costumbre', 'Anula el consentimiento'], respuesta: 'C', tema: 'Acto Jurídico' }
     ];
 
-    let indiceActual = 0;
+    let modo = '';
+    let usadas = [];
     let puntaje = 0;
     let total = 0;
+    let tiempoRestante = 7200;
+    let cronometro;
 
-    function mostrarPregunta() {
-      const pregunta = preguntas[indiceActual];
-      document.getElementById("tipo").innerText = `Tipo: ${pregunta.tipo}`;
-      document.getElementById("pregunta").innerText = pregunta.pregunta;
-      document.getElementById("respuesta").innerText = "";
-
-      const opcionesHTML = pregunta.opciones.map(opcion => {
-        return `<div class="opcion" onclick="verificarRespuesta(this.innerText)">${opcion}</div>`;
-      }).join("");
-
-      document.getElementById("opciones").innerHTML = opcionesHTML;
-      actualizarPuntaje();
+    function iniciarSimulador(tipo) {
+      modo = tipo;
+      usadas = [];
+      puntaje = 0;
+      total = 0;
+      document.getElementById('menu').classList.add('oculto');
+      document.getElementById('control').classList.remove('oculto');
+      if (modo === 'examen') iniciarCronometro();
+      siguientePregunta();
     }
 
-    function verificarRespuesta(seleccion) {
-      const respuesta = preguntas[indiceActual].respuesta.trim().toLowerCase();
-      const eleccion = seleccion.trim().toLowerCase();
-      const esCorrecta = respuesta === eleccion;
-      const resp = document.getElementById("respuesta");
+    function iniciarCronometro() {
+      cronometro = setInterval(() => {
+        if (tiempoRestante <= 0) {
+          clearInterval(cronometro);
+          finalizar();
+        } else {
+          tiempoRestante--;
+        }
+      }, 1000);
+    }
 
-      if (esCorrecta) {
+    function mostrarPregunta(p) {
+      const div = document.getElementById('pregunta');
+      div.innerHTML = `<h3>${p.tipo}</h3><p>${p.pregunta}</p>`;
+      p.opciones.forEach((op, i) => {
+        const btn = document.createElement('button');
+        btn.innerText = op;
+        btn.className = 'opcion';
+        btn.onclick = () => verificarRespuesta(p, op);
+        div.appendChild(btn);
+      });
+      div.classList.remove('oculto');
+    }
+
+    function verificarRespuesta(p, seleccionada) {
+      const r = document.getElementById('resultado');
+      if (seleccionada === p.opciones[p.respuesta?.charCodeAt?.(0) - 65] || seleccionada === p.respuesta) {
         puntaje++;
-        resp.innerText = "Correcto!";
-        resp.style.color = "green";
+        r.innerHTML = '<p class="correcto">¡Correcto!</p>';
       } else {
-        resp.innerText = `Incorrecto. Respuesta correcta: ${preguntas[indiceActual].respuesta}`;
-        resp.style.color = "red";
+        r.innerHTML = `<p class="incorrecto">Incorrecto. Respuesta correcta: ${p.respuesta}</p>`;
       }
       total++;
       actualizarPuntaje();
     }
 
     function actualizarPuntaje() {
-      document.getElementById("puntaje").innerText = `Puntaje: ${puntaje} / ${total}`;
+      document.getElementById('puntaje').innerText = `Puntaje: ${puntaje} / ${total}`;
     }
 
     function siguientePregunta() {
-      indiceActual++;
-      if (indiceActual >= preguntas.length) {
-        indiceActual = 0;
-      }
-      mostrarPregunta();
+      document.getElementById('resultado').innerHTML = '';
+      if (usadas.length === preguntas.length) return finalizar();
+      let siguiente;
+      do {
+        siguiente = preguntas[Math.floor(Math.random() * preguntas.length)];
+      } while (usadas.includes(siguiente));
+      usadas.push(siguiente);
+      mostrarPregunta(siguiente);
     }
 
     function reiniciarSimulador() {
-      puntaje = 0;
-      total = 0;
-      indiceActual = 0;
-      mostrarPregunta();
+      location.reload();
     }
 
-    window.onload = () => {
-      preguntas.sort(() => Math.random() - 0.5);
-      mostrarPregunta();
-    };
-  </script></body>
+    function finalizar() {
+      document.getElementById('pregunta').innerHTML = '';
+      document.getElementById('pregunta').classList.add('oculto');
+      document.getElementById('resultado').innerHTML = `<h2>Simulador terminado. Puntaje final: ${puntaje} / ${total}</h2>`;
+      clearInterval(cronometro);
+    }
+  </script>
+</body>
 </html>
