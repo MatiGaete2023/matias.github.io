@@ -1,103 +1,108 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Simulador Academia Judicial</title>
+  <title>Simulador AJ – Acto Jurídico</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       padding: 20px;
-      background: #f9f9f9;
-    }
-    h1 {
-      color: #2c3e50;
     }
     .pregunta {
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 10px;
     }
     .opcion {
-      padding: 8px;
+      display: block;
+      margin: 5px 0;
+      padding: 10px;
       border: 1px solid #ccc;
-      margin: 4px 0;
       cursor: pointer;
-      background-color: #fff;
-      width: fit-content;
     }
     .opcion:hover {
-      background-color: #e0e0e0;
+      background-color: #eef;
     }
-    .respuesta {
+    #respuesta {
       margin-top: 15px;
       font-weight: bold;
     }
-    .puntaje {
-      margin-top: 15px;
-      font-weight: bold;
-      color: darkblue;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
+    #puntaje {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: navy;
     }
   </style>
 </head>
 <body>
-  <h1>Simulador Academia Judicial</h1>
-  <div class="puntaje" id="puntaje"></div>
-  <div class="pregunta" id="pregunta"></div>
+  <h2>Simulador Academia Judicial</h2>
+  <div id="puntaje"></div>
+  <div id="tipo" class="tipo"></div>
+  <div id="pregunta" class="pregunta"></div>
   <div id="opciones"></div>
-  <div class="respuesta" id="respuesta"></div>
+  <div id="respuesta"></div>
   <button onclick="siguientePregunta()">Siguiente pregunta</button>
-  <button onclick="reiniciarSimulador()">Reiniciar</button>
+  <button onclick="reiniciarSimulador()">Reiniciar</button>  <script>
+    const preguntas = [
+      {
+        tipo: "Seleccion multiple",
+        pregunta: "¿Cuál de los siguientes es un elemento esencial del acto jurídico?",
+        opciones: ["Condición", "Objeto lícito", "Plazo", "Modalidad"],
+        respuesta: "Objeto lícito"
+      },
+      {
+        tipo: "Seleccion multiple",
+        pregunta: "El silencio como manifestación de voluntad en el acto jurídico...",
+        opciones: [
+          "Siempre se considera aceptación",
+          "Nunca produce efectos",
+          "Puede ser relevante si hay norma o costumbre",
+          "Anula el consentimiento"
+        ],
+        respuesta: "Puede ser relevante si hay norma o costumbre"
+      },
+      {
+        tipo: "Verdadero / Falso",
+        pregunta: "El error esencial en el objeto puede anular un acto jurídico.",
+        opciones: ["Verdadero", "Falso"],
+        respuesta: "Verdadero"
+      },
+      {
+        tipo: "Verdadero / Falso",
+        pregunta: "El acto jurídico unilateral requiere dos partes.",
+        opciones: ["Verdadero", "Falso"],
+        respuesta: "Falso"
+      }
+    ];
 
-  <script src="preguntas.js"></script>
-  <script>
-    let todas = [];
+    let indiceActual = 0;
     let puntaje = 0;
     let total = 0;
-    let preguntaActual = null;
 
-    function unirPreguntas() {
-      todas = [];
-      if (typeof preguntas_multiples !== 'undefined') {
-        todas = todas.concat(preguntas_multiples);
-      }
-      if (typeof preguntas_vf !== 'undefined') {
-        preguntas_vf.forEach(p => {
-          p.opciones = ["Verdadero", "Falso"];
-        });
-        todas = todas.concat(preguntas_vf);
-      }
-    }
-
-    function cargarPregunta() {
-      unirPreguntas();
+    function mostrarPregunta() {
+      const pregunta = preguntas[indiceActual];
+      document.getElementById("tipo").innerText = `Tipo: ${pregunta.tipo}`;
+      document.getElementById("pregunta").innerText = pregunta.pregunta;
       document.getElementById("respuesta").innerText = "";
-      const i = Math.floor(Math.random() * todas.length);
-      preguntaActual = todas[i];
-      document.getElementById("pregunta").innerText = preguntaActual.pregunta;
-      const contenedor = document.getElementById("opciones");
-      contenedor.innerHTML = "";
-      preguntaActual.opciones.forEach((opc) => {
-        const div = document.createElement("div");
-        div.className = "opcion";
-        div.innerText = opc;
-        div.onclick = () => validarRespuesta(opc);
-        contenedor.appendChild(div);
-      });
+
+      const opcionesHTML = pregunta.opciones.map(opcion => {
+        return `<div class="opcion" onclick="verificarRespuesta(this.innerText)">${opcion}</div>`;
+      }).join("");
+
+      document.getElementById("opciones").innerHTML = opcionesHTML;
       actualizarPuntaje();
     }
 
-    function validarRespuesta(seleccion) {
-      const correcta = preguntaActual.respuesta;
+    function verificarRespuesta(seleccion) {
+      const respuesta = preguntas[indiceActual].respuesta.trim().toLowerCase();
+      const eleccion = seleccion.trim().toLowerCase();
+      const esCorrecta = respuesta === eleccion;
       const resp = document.getElementById("respuesta");
-      if (seleccion === correcta || seleccion === correcta.toUpperCase()) {
+
+      if (esCorrecta) {
         puntaje++;
-        resp.innerText = "¡Correcto!";
+        resp.innerText = "Correcto!";
         resp.style.color = "green";
       } else {
-        resp.innerText = "Incorrecto. Respuesta correcta: " + correcta;
+        resp.innerText = `Incorrecto. Respuesta correcta: ${preguntas[indiceActual].respuesta}`;
         resp.style.color = "red";
       }
       total++;
@@ -109,16 +114,23 @@
     }
 
     function siguientePregunta() {
-      cargarPregunta();
+      indiceActual++;
+      if (indiceActual >= preguntas.length) {
+        indiceActual = 0;
+      }
+      mostrarPregunta();
     }
 
     function reiniciarSimulador() {
       puntaje = 0;
       total = 0;
-      cargarPregunta();
+      indiceActual = 0;
+      mostrarPregunta();
     }
 
-    window.onload = cargarPregunta;
-  </script>
-</body>
+    window.onload = () => {
+      preguntas.sort(() => Math.random() - 0.5);
+      mostrarPregunta();
+    };
+  </script></body>
 </html>
