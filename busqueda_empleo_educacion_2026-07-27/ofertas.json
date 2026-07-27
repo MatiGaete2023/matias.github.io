@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "fecha_busqueda": "2026-07-27",
+    "zona_horaria": "America/Santiago",
+    "ultima_verificacion": "2026-07-27T12:08:11-04:00",
+    "perfil_fuente": "Perfil entregado por la usuaria; no se encontró CV adjunto",
+    "referencias_disponibles": false,
+    "busqueda_anterior_disponible": false,
+    "criterio_admision": "Solo vigente_verificada"
+  },
+  "ofertas": [],
+  "duplicados": [],
+  "fuentes_bloqueadas": [
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "Empleos Públicos",
+      "url": "https://www.empleospublicos.cl/pub/convocatorias/convocatorias.aspx",
+      "estado": "no_verificable",
+      "motivo": "HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; página genérica, sin oferta específica",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    },
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "Bolsa Nacional de Empleo",
+      "url": "https://www.bne.cl/oferta?query=educadora%20de%20parvulos&region=8",
+      "estado": "no_verificable",
+      "motivo": "HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; búsqueda genérica, sin oferta específica",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    },
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "Fundación Integra",
+      "url": "https://trabajaconnosotros.integra.cl/",
+      "estado": "no_verificable",
+      "motivo": "HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; portal genérico, sin oferta específica",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    },
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "JUNJI",
+      "url": "https://www.junji.gob.cl/trabaja-con-nosotros/",
+      "estado": "no_verificable",
+      "motivo": "HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; portal genérico, sin oferta específica",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    },
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "Portales privados (Trabajando, ChileTrabajos, Computrabajo, LinkedIn, Laborum, Get on Board, Lever, Greenhouse, Indeed)",
+      "url": "",
+      "estado": "no_verificable",
+      "motivo": "Búsqueda web HTTP 401; comprobaciones directas HTTP 000/CONNECT 403; no se individualizaron ofertas",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    },
+    {
+      "tipo": "fuente_bloqueada",
+      "nombre": "Universia y Duoc",
+      "url": "",
+      "estado": "no_verificable",
+      "motivo": "Búsqueda web HTTP 401 y/o acceso directo HTTP 000/CONNECT 403; no se individualizaron ofertas",
+      "first_seen": "2026-07-27",
+      "last_checked": "2026-07-27",
+      "enlaces_alternativos": ""
+    }
+  ],
+  "conteos": {
+    "vigente_verificada": 0,
+    "vigencia_probable": 0,
+    "no_verificable_ofertas_especificas": 0,
+    "vencida": 0,
+    "duplicados": 0
+  }
+}

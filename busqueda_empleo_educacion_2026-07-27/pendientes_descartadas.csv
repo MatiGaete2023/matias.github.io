@@ -1,0 +1,7 @@
+﻿tipo;nombre;url;estado;motivo;first_seen;last_checked;enlaces_alternativos
+fuente_bloqueada;Empleos Públicos;https://www.empleospublicos.cl/pub/convocatorias/convocatorias.aspx;no_verificable;"HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; página genérica, sin oferta específica";2026-07-27;2026-07-27;
+fuente_bloqueada;Bolsa Nacional de Empleo;https://www.bne.cl/oferta?query=educadora%20de%20parvulos&region=8;no_verificable;"HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; búsqueda genérica, sin oferta específica";2026-07-27;2026-07-27;
+fuente_bloqueada;Fundación Integra;https://trabajaconnosotros.integra.cl/;no_verificable;"HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; portal genérico, sin oferta específica";2026-07-27;2026-07-27;
+fuente_bloqueada;JUNJI;https://www.junji.gob.cl/trabaja-con-nosotros/;no_verificable;"HTTP 401 en búsqueda web y túnel HTTP 403 en reapertura; portal genérico, sin oferta específica";2026-07-27;2026-07-27;
+fuente_bloqueada;Portales privados (Trabajando, ChileTrabajos, Computrabajo, LinkedIn, Laborum, Get on Board, Lever, Greenhouse, Indeed);;no_verificable;"Búsqueda web HTTP 401; comprobaciones directas HTTP 000/CONNECT 403; no se individualizaron ofertas";2026-07-27;2026-07-27;
+fuente_bloqueada;Universia y Duoc;;no_verificable;"Búsqueda web HTTP 401 y/o acceso directo HTTP 000/CONNECT 403; no se individualizaron ofertas";2026-07-27;2026-07-27;
